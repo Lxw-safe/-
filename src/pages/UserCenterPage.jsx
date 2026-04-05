@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Modal, List, Avatar, Badge, Divider, Form, Input, Select, DatePicker, Radio, Switch, Space, Table, Tag, message, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined, CheckOutlined, ClockCircleOutlined, EnvironmentOutlined, PhoneOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
 
-const UserCenterPage = () => {
-  // 模拟登录状态
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [userInfo, setUserInfo] = useState({
+// 导入加密工具
+import { saveUserToLocalStorage } from '../utils/encryption';
+
+const UserCenterPage = ({ isLoggedIn, userInfo: propUserInfo, setUserInfo: propSetUserInfo }) => {
+  // 本地状态管理
+  const [userInfo, setUserInfo] = useState(propUserInfo || {
     name: '张三',
     studentId: '2021001',
     phone: '138****1234',
     email: 'zhangsan@example.com',
     dormitory: '3号楼123室'
   });
+
+  // 当props中的userInfo变化时，更新本地状态
+  useEffect(() => {
+    if (propUserInfo) {
+      setUserInfo(propUserInfo);
+    }
+  }, [propUserInfo]);
 
   // 弹窗状态
   const [modalVisible, setModalVisible] = useState(false);
@@ -85,22 +94,34 @@ const UserCenterPage = () => {
 
   // 保存个人信息
   const handleSavePersonalInfo = (values) => {
-    setUserInfo({
+    const updatedUserInfo = {
       ...userInfo,
       ...values
-    });
+    };
+    setUserInfo(updatedUserInfo);
+    if (propSetUserInfo) {
+      propSetUserInfo(updatedUserInfo);
+      // 更新本地存储（加密）
+      saveUserToLocalStorage(updatedUserInfo);
+    }
     message.success('个人信息保存成功');
     closeModal();
   };
 
   // 保存联系方式
   const handleSaveContactInfo = (values) => {
-    setUserInfo({
+    const updatedUserInfo = {
       ...userInfo,
       phone: values.phone,
       email: values.email,
       dormitory: values.dormitory
-    });
+    };
+    setUserInfo(updatedUserInfo);
+    if (propSetUserInfo) {
+      propSetUserInfo(updatedUserInfo);
+      // 更新本地存储（加密）
+      saveUserToLocalStorage(updatedUserInfo);
+    }
     message.success('联系方式保存成功');
     closeModal();
   };

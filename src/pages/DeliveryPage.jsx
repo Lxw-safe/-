@@ -7,10 +7,10 @@ const DeliveryPage = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-            成为配送员
+            抢单大厅
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            为在校大学生提供勤工助学机会，灵活接单，轻松赚钱
+            配送员专属抢单平台，灵活接单，轻松赚钱
           </p>
         </div>
         <DeliveryOrders />

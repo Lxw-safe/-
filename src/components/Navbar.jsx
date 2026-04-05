@@ -7,13 +7,14 @@ import {
   UserSwitchOutlined,
   SearchOutlined,
   UserOutlined,
-  LoginOutlined
+  LoginOutlined,
+  LogoutOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const { Header } = Layout;
 
-const Navbar = () => {
+const Navbar = ({ isLoggedIn, userInfo, onLoginClick, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -38,6 +39,18 @@ const Navbar = () => {
     }
   };
 
+  // 登出处理
+  const handleLogout = () => {
+    // 清除本地存储
+    localStorage.removeItem('user');
+    // 调用父组件传递的登出函数
+    if (onLogout) {
+      onLogout();
+    }
+    // 跳转到首页
+    navigate('/');
+  };
+
   const menuItems = [
     {
       key: 'home',
@@ -60,7 +73,7 @@ const Navbar = () => {
     {
       key: 'deliver',
       icon: <UserSwitchOutlined />,
-      label: '成为配送员',
+      label: '抢单大厅',
       onClick: () => navigate('/deliver')
     },
     {
@@ -97,13 +110,42 @@ const Navbar = () => {
         />
 
         <div className="flex items-center space-x-4">
-          <Button 
-            type="primary" 
-            icon={<LoginOutlined />}
-            className="bg-primary hover:bg-blue-600"
-          >
-            登录/注册
-          </Button>
+          {isLoggedIn && userInfo ? (
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: 'profile',
+                    label: '个人中心',
+                    onClick: () => navigate('/user')
+                  },
+                  {
+                    key: 'logout',
+                    label: '退出登录',
+                    icon: <LogoutOutlined />,
+                    onClick: handleLogout
+                  }
+                ]
+              }}
+              placement="bottomRight"
+            >
+              <Button 
+                className="flex items-center gap-2"
+              >
+                <UserOutlined />
+                {userInfo.username}
+              </Button>
+            </Dropdown>
+          ) : (
+            <Button 
+              type="primary" 
+              icon={<LoginOutlined />}
+              className="bg-primary hover:bg-blue-600"
+              onClick={onLoginClick}
+            >
+              登录/注册
+            </Button>
+          )}
         </div>
       </div>
     </Header>
